@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace AdventOfCode.Day4;
 
 public class Day4Part2 : IPuzzleSolution
