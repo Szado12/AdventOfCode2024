@@ -6,6 +6,8 @@ internal class PuzzleSolutionLocator
     {
         return typeof(PuzzleSolutionLocator).Assembly.GetTypes()
             .Where(type => typeof(IPuzzleSolution).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+            .OrderBy(type => type.Namespace!.Length)
+            .ThenBy(type => type.Namespace!)
             .Select(type => (IPuzzleSolution)Activator.CreateInstance(type)!);
     }
     
