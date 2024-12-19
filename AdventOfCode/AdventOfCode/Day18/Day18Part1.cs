@@ -1,5 +1,3 @@
-
-using System.Text;
 using AdventOfCode.Helpers;
 
 namespace AdventOfCode.Day18;
