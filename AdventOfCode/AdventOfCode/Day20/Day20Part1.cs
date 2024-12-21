@@ -5,8 +5,6 @@ namespace AdventOfCode.Day20;
 public class Day20Part1 : IPuzzleSolution
 {
     private string _input = "../../../Day20/input.txt";
-    private HashSet<string> _towels;
-    private List<string> _words = new();
     private Dictionary<Point, bool> _map = new();
     private Dictionary<Point, int> _defaultPath = new();
     private int _width;
