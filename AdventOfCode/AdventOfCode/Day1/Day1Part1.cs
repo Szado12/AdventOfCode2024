@@ -1,3 +1,5 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day1;
 
 internal class Day1Part1 : IPuzzleSolution
@@ -16,8 +18,8 @@ internal class Day1Part1 : IPuzzleSolution
         foreach (var line in lines)
         {
             var numbers = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            first.Add(int.Parse(numbers[0]));
-            second.Add(int.Parse(numbers[1]));
+            first.Add(numbers[0].ToInt());
+            second.Add(numbers[1].ToInt());
         }
 
         first.Sort();

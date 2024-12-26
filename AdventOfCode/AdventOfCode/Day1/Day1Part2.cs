@@ -1,3 +1,5 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day1;
 
 internal class Day1Part2 : IPuzzleSolution
@@ -16,23 +18,21 @@ internal class Day1Part2 : IPuzzleSolution
         foreach (var line in lines)
         {
             var numbers = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            first.Add(int.Parse(numbers[0]));
-            var secondNumber = int.Parse(numbers[1]);
+            first.Add(numbers[0].ToInt());
+            var secondNumber = numbers[1].ToInt();
 
-            if (second.ContainsKey(secondNumber))
+            if (!second.TryAdd(secondNumber, 1))
                 second[secondNumber]++;
-            else
-                second[secondNumber] = 1;
         }
 
         long diff = 0;
 
         foreach (var firstNumber in first)
         {
-            if (!second.ContainsKey(firstNumber))
+            if (!second.TryGetValue(firstNumber, out var occurances))
                 continue;
     
-            diff += firstNumber * second[firstNumber];
+            diff += firstNumber * occurances;
         }
 
         return diff.ToString();

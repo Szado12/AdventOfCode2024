@@ -1,3 +1,5 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day2;
 
 public class Day2Part1 : IPuzzleSolution
@@ -11,7 +13,7 @@ public class Day2Part1 : IPuzzleSolution
         {
             while (inputReader.ReadLine() is { } line)
             {
-                var numbers = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(Int32.Parse).ToArray();
+                var numbers = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToInt()).ToArray();
 
                 if (IsSafe(numbers))
                     numberOfSafeReports++;
@@ -28,7 +30,7 @@ public class Day2Part1 : IPuzzleSolution
         
         var firstDiff = numbers[0] - numbers[1];
         
-        if (Int32.Abs(firstDiff) > 3 || firstDiff == 0)
+        if (int.Abs(firstDiff) > 3 || firstDiff == 0)
             return false;
 
         var expectedSign = firstDiff / int.Abs(firstDiff);
@@ -36,7 +38,7 @@ public class Day2Part1 : IPuzzleSolution
         for (int i = 1; i < numbers.Length - 1; i++)
         {
             var diff = numbers[i] - numbers[i + 1];
-            if (Int32.Abs(diff) > 3 || diff == 0)
+            if (int.Abs(diff) > 3 || diff == 0)
                 return false;
 
             if (expectedSign != diff / int.Abs(diff))
