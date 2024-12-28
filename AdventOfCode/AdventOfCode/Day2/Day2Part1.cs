@@ -4,40 +4,44 @@ namespace AdventOfCode.Day2;
 
 public class Day2Part1 : IPuzzleSolution
 {
+    private string _input = "../../../Day2/input.txt";
+    private List<int[]> reportsToCheck = new();
     public string Solve()
     {
-        string path = "../../../Day2/input.txt";
         var numberOfSafeReports = 0;
 
-        using (StreamReader inputReader = new StreamReader(path))
+        using (StreamReader inputReader = new StreamReader(_input))
         {
             while (inputReader.ReadLine() is { } line)
             {
-                var numbers = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToInt()).ToArray();
-
-                if (IsSafe(numbers))
-                    numberOfSafeReports++;
+                reportsToCheck.Add(line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToInt()).ToArray());
             }
+        }
+
+        foreach (var report in reportsToCheck)
+        {
+            if (IsSafe(report))
+                numberOfSafeReports++;
         }
 
         return numberOfSafeReports.ToString();
     }
 
-    bool IsSafe(int[] numbers)
+    bool IsSafe(int[] report)
     {
-        if (numbers.Length <= 2)
+        if (report.Length < 2)
             return true;
         
-        var firstDiff = numbers[0] - numbers[1];
+        var firstDiff = report[0] - report[1];
         
         if (int.Abs(firstDiff) > 3 || firstDiff == 0)
             return false;
 
         var expectedSign = firstDiff / int.Abs(firstDiff);
 
-        for (int i = 1; i < numbers.Length - 1; i++)
+        for (int i = 1; i < report.Length - 1; i++)
         {
-            var diff = numbers[i] - numbers[i + 1];
+            var diff = report[i] - report[i + 1];
             if (int.Abs(diff) > 3 || diff == 0)
                 return false;
 

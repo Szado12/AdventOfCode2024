@@ -1,64 +1,85 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day2;
 
 public class Day2Part2 : IPuzzleSolution
 {
+    private string _input = "../../../Day2/input.txt";
+    private List<List<int>> reportsToCheck = new();
     public string Solve()
     {
-        string path = "../../../Day2/input.txt";
         var numberOfSafeReports = 0;
-
-        using (StreamReader inputReader = new StreamReader(path))
+        
+        using (StreamReader inputReader = new StreamReader(_input))
         {
             while (inputReader.ReadLine() is { } line)
             {
-                var numbers = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(Int32.Parse).ToList();
+                reportsToCheck.Add(line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToInt()).ToList());
+            }
+        }
 
-                if (IsSafe(numbers))
-                {
+        foreach (var report in reportsToCheck)
+        {
+            var incorrectValueIndex = IsSafe(report);
+            if (incorrectValueIndex == -1)
+            {
+                numberOfSafeReports++;
+            }
+            else
+            {
+                if(CanBeFixed(report, incorrectValueIndex))
                     numberOfSafeReports++;
-                }
-                else
-                {
-                    for (int i = 0; i < numbers.Count; i++)
-                    {
-                        var reportClone = new List<int>(numbers);
-                        reportClone.RemoveAt(i);
-                        if (IsSafe(reportClone))
-                        {
-                            numberOfSafeReports++;
-                            break;
-                        }
-                    }
-                }
             }
         }
 
         return numberOfSafeReports.ToString();
     }
+    
+    
 
-    bool IsSafe(List<int> numbers)
+    private int IsSafe(List<int> report)
     {
-        if (numbers.Count <= 2)
-            return true;
-
-        var singleFix = 0;
-        var firstDiff = numbers[0] - numbers[1];
+        if (report.Count < 2)
+            return -1;
+        
+        var firstDiff = report[0] - report[1];
         
         if (Int32.Abs(firstDiff) > 3 || firstDiff == 0)
-            return false;
+            return 0;
 
         var expectedSign = firstDiff / int.Abs(firstDiff);
 
-        for (int i = 1; i < numbers.Count - 1; i++)
+        for (int i = 1; i < report.Count - 1; i++)
         {
-            var diff = numbers[i] - numbers[i + 1];
+            var diff = report[i] - report[i + 1];
             if (Int32.Abs(diff) > 3 || diff == 0)
-                return false;
+                return i;
 
             if (expectedSign != diff / int.Abs(diff))
-                return false;
+                return i;
         }
 
-        return true;
+        return -1;
+    }
+
+    private bool CanBeFixed(List<int> report, int firstIncorrectIndex)
+    {
+        //Check if removing 1st index fixed report:
+        if (CanBeFixedByRemovingIndex(report, 0))
+            return true;
+
+        //Check if removing index before first incorrect number fixed report:
+        if (CanBeFixedByRemovingIndex(report, firstIncorrectIndex))
+            return true;
+
+        //Check if removing index of incorrect number fixed report:
+        return CanBeFixedByRemovingIndex(report, firstIncorrectIndex + 1);
+    }
+
+    private bool CanBeFixedByRemovingIndex(List<int> report, int indexToRemove)
+    {
+        var reportClone = new List<int>(report);
+        reportClone.RemoveAt(indexToRemove);
+        return IsSafe(reportClone) == -1;
     }
 }
