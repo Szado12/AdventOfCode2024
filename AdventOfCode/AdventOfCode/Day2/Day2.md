@@ -1,4 +1,4 @@
-# [Day1](https://adventofcode.com/2024/day/2)
+# [Day2](https://adventofcode.com/2024/day/2)
 
 ## Input
 Each line represents a single report. Each report contains a number of numeric values.

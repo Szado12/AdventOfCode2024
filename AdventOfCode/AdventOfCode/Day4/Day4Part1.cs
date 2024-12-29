@@ -1,68 +1,55 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day4;
 
 public class Day4Part1 : IPuzzleSolution
 {
-    private List<string> _lines = null!;
+    private Dictionary<Point, char> _map = new();
     private int _width;
     private int _height;
     private string _input = "../../../Day4/input.txt";
     private const string Word = "XMAS";
-    private readonly List<(int, int)> _directions = new List<(int, int)>
-    {
-        (-1, 0),
-        (1, 0),
-        (0, 1),
-        (0, -1),
-        (-1, -1),
-        (1, 1),
-        (-1, 1),
-        (1, -1)
-    };
     
     public string Solve()
     {
-        _lines = new List<string>();
-        
-        
-        var occurrences = 0;
-        
         using (StreamReader inputReader = new StreamReader(_input))
         {
+            _height = 0;
             while (inputReader.ReadLine() is { } line)
             {
-                _lines.Add(line);
-            }
-
-            _width = _lines.First().Length;
-            _height = _lines.Count;
-
-            for (int i = 0; i < _height; i++)
-            {
-                for (int j = 0; j < _width; j++)
+                for (int x = 0; x < line.Length; x++)
                 {
-                    foreach (var direction in _directions)
-                    {
-                        if (SearchWord(j, i, direction, Word))
-                            occurrences++;
-                    }
+                    _map[new(x, _height)] = line[x];
                 }
+                _height++;
             }
         }
+
+        _width = _map.Keys.Max(p => p.X) + 1;
+
+        var occurrences = 0;
+        var startingPoints = _map.Where(kvp => kvp.Value == Word[0]).Select(kvp => kvp.Key);
+        
+        foreach (var startingPoint in startingPoints)
+        {
+            foreach (var direction in Directions.DirectionsWithDiagonals)
+            {
+                if (SearchWord(startingPoint, direction, Word))
+                    occurrences++;
+            }
+        }
+        
         return occurrences.ToString();
     }
 
-    private bool SearchWord(int x, int y, (int x, int y) direction, string word)
+    private bool SearchWord(Point startingPoint, Point direction, string word)
     {
-        for (int i = 0; i < word.Length; i++)
+        for (int i = 1; i < word.Length; i++)
         {
-            var currentXPos = x + i * direction.x;
-            var currentYPos = y + i * direction.y;
-
-            if (currentXPos < 0 ||
-                currentXPos >= _width ||
-                currentYPos < 0 ||
-                currentYPos >= _height ||
-                _lines[currentYPos][currentXPos] != word[i])
+            var currentPoint = startingPoint + i * direction;
+            
+            if (currentPoint.IsOutOfRange(_width, _height) ||
+                _map[currentPoint] != word[i])
             {
                 return false;
             }

@@ -1,52 +1,53 @@
 using System.Text.RegularExpressions;
+using AdventOfCode.Helpers;
 
 namespace AdventOfCode.Day3;
 
 public class Day3Part2 : IPuzzleSolution
 {
+    private string _input = "../../../Day3/input.txt";
+    private string _corruptedMemory;
+    private string _mulRegex = "mul\\(([0-9]{1,3}),([0-9]{1,3})\\)";
+    private string _doRegex = "do\\(\\)";
+    private string _dontRegex = "don't\\(\\)";
+    
     public string Solve()
     {
         string path = "../../../Day3/input.txt";
-        
-        var sumOfMultiplications = 0;
-        var isEnabled = true;
-        
-        var regex = "mul\\([0-9]{1,3},[0-9]{1,3}\\)";
-        var doRegex = "do\\(\\)";
-        var donnotRegex = "don't\\(\\)";
-        
+
+
         using (StreamReader inputReader = new StreamReader(path))
         {
-            var input = inputReader.ReadToEnd();
-            
-            var matches = Regex.Matches(input, regex).ToArray();
-            var donnotMatches = Regex.Matches(input, donnotRegex).ToArray();
-            var doMatches = Regex.Matches(input, doRegex).ToArray();
+            _corruptedMemory = inputReader.ReadToEnd();
+        }
+        
 
-            var doIndexes = doMatches.Select(x => x.Index).ToList();
-            var mergedDo = doIndexes.Concat(donnotMatches.Select(x => x.Index)).OrderBy(x => x).ToList();
+        var mulCommands = Regex.Matches(_corruptedMemory, _mulRegex).ToArray();
+        var doCommands = Regex.Matches(_corruptedMemory, _doRegex).ToArray();
+        var dontCommands = Regex.Matches(_corruptedMemory, _dontRegex).ToArray();
 
-            var currentDoIndex = 0;
-            
-            foreach (var match in matches)
+        var doIndexes = doCommands.Select(x => x.Index).ToList();
+        var mergedCommandsIndexes = doIndexes.Concat(dontCommands.Select(x => x.Index)).OrderBy(x => x).ToList();
+
+        var currentDoIndex = 0;
+        var isEnabled = true;
+        var sumOfMultiplications = 0;
+        
+        foreach (var match in mulCommands)
+        {
+            var index = match.Index;
+            while (currentDoIndex < mergedCommandsIndexes.Count && index > mergedCommandsIndexes[currentDoIndex])
             {
-                var index = match.Index;
-                while (currentDoIndex < mergedDo.Count && index > mergedDo[currentDoIndex])
-                {
-                    isEnabled = doIndexes.Contains(mergedDo[currentDoIndex]);
-                    currentDoIndex++;
-                }
+                isEnabled = doIndexes.Contains(mergedCommandsIndexes[currentDoIndex]);
+                currentDoIndex++;
+            }
 
-                if (isEnabled)
-                {
-                    var stringNumbers = match.Value.Replace("mul(", "").Replace(")", "");
-                    var numbers = stringNumbers.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(Int32.Parse)
-                        .ToList();
-                    sumOfMultiplications += numbers[0] * numbers[1];
-                }
+            if (isEnabled)
+            {
+                sumOfMultiplications += match.Groups[1].Value.ToInt() * match.Groups[2].Value.ToInt();
             }
         }
-
+        
         return sumOfMultiplications.ToString();
     }
 }

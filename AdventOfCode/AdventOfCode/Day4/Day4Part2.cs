@@ -1,69 +1,59 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day4;
 
 public class Day4Part2 : IPuzzleSolution
 {
-    private List<string> _lines = null!;
+    private Dictionary<Point, char> _map = new();
     private int _width;
     private int _height;
+    private string _input = "../../../Day4/input.txt";
+    private const string Word = "MAS";
     public string Solve()
-    {
-        string path = "../../../Day4/input.txt";
-        _lines = new List<string>();
-        var word = "MAS";
-
-        var directions = new List<(int x, int y)>
+    { 
+        using (StreamReader inputReader = new StreamReader(_input))
         {
-            (-1, -1),
-            (1, 1),
-            (-1, 1),
-            (1, -1)
-        };
-
-        var occurrences = 0;
-        
-        using (StreamReader inputReader = new StreamReader(path))
-        {
+            _height = 0;
             while (inputReader.ReadLine() is { } line)
             {
-                _lines.Add(line);
-            }
-
-            _width = _lines.First().Length;
-            _height = _lines.Count;
-
-            for (int i = 0; i < _height; i++)
-            {
-                for (int j = 0; j < _width; j++)
+                for (int x = 0; x < line.Length; x++)
                 {
-                    int diagonalOccurrences = 0;
-                    foreach (var direction in directions)
-                    {
-                        var x = j + direction.x * -(word.Length/2);
-                        var y = i + direction.y * -(word.Length/2);
-                        if (SearchWord(x, y, direction, word))
-                            diagonalOccurrences++;
-                    }
-
-                    if (diagonalOccurrences == 2)
-                        occurrences++;
+                    _map[new(x, _height)] = line[x];
                 }
+
+                _width = line.Length;
+                _height++;
             }
+        }
+        
+        
+        var startingPoints = _map.Where(kvp => kvp.Value == Word[Word.Length/2]).Select(kvp => kvp.Key).ToList();
+        
+        var occurrences = 0;
+        foreach (var startingPoint in startingPoints)
+        {
+            int diagonalOccurrences = 0;
+            foreach (var direction in Directions.DirectionsOnlyDiagonals)
+            {
+                var searchPoint = startingPoint + direction * (-Word.Length / 2);
+                if (SearchWord(searchPoint, direction, Word))
+                    diagonalOccurrences++;
+            }
+
+            if (diagonalOccurrences > 1)
+                occurrences++;
         }
         return occurrences.ToString();
     }
 
-    private bool SearchWord(int x, int y, (int x, int y) direction, string word)
+    private bool SearchWord(Point startingPoint, Point direction, string word)
     {
         for (int i = 0; i < word.Length; i++)
         {
-            var currentXPos = x + i * direction.x;
-            var currentYPos = y + i * direction.y;
-
-            if (currentXPos < 0 ||
-                currentXPos >= _width ||
-                currentYPos < 0 ||
-                currentYPos >= _height ||
-                _lines[currentYPos][currentXPos] != word[i])
+            var currentPoint = startingPoint + i * direction;
+            
+            if (currentPoint.IsOutOfRange(_width, _height) ||
+                _map[currentPoint] != word[i])
             {
                 return false;
             }

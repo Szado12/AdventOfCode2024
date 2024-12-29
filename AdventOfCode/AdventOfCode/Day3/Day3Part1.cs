@@ -1,33 +1,29 @@
 using System.Text.RegularExpressions;
+using AdventOfCode.Helpers;
 
 namespace AdventOfCode.Day3;
 
 public class Day3Part1 : IPuzzleSolution
 {
+    private string _input = "../../../Day3/input.txt";
+    private string _corruptedMemory;
+    private string _mulRegex = "mul\\(([0-9]{1,3}),([0-9]{1,3})\\)";
+    
     public string Solve()
     {
-        string path = "../../../Day3/input.txt";
-        
-        var sumOfMultiplications = 0;
-        var isEnabled = true;
-        
-        var regex = "mul\\([0-9]{1,3},[0-9]{1,3}\\)";
-        
-        using (StreamReader inputReader = new StreamReader(path))
+        using (StreamReader inputReader = new StreamReader(_input))
         {
-            var input = inputReader.ReadToEnd();
+            _corruptedMemory = inputReader.ReadToEnd();
+
+        }
+
+        var sumOfMultiplications = 0;
+        var matches = Regex.Matches(_corruptedMemory, _mulRegex).ToArray();
             
-            var matches = Regex.Matches(input, regex).ToArray();
-            
-            foreach (var match in matches)
-            {
-                var stringNumbers = match.Value.Replace("mul(", "").Replace(")", "");
-                var numbers = stringNumbers.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(Int32.Parse)
-                    .ToList();
-                sumOfMultiplications += numbers[0] * numbers[1];
-                
-            }
-            
+        
+        foreach (var match in matches)
+        {
+            sumOfMultiplications += match.Groups[1].Value.ToInt() * match.Groups[2].Value.ToInt();
         }
 
         return sumOfMultiplications.ToString();
