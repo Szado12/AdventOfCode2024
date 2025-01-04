@@ -1,15 +1,16 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day5;
 
 public class Day5Part1 : IPuzzleSolution
 {
     private string _input = "../../../Day5/input.txt";
     private Dictionary<int, List<int>> _rules;
+    private List<List<int>> _numbers = new();
     
     public string Solve()
     {
         _rules = new Dictionary<int, List<int>>();
-        var sum = 0;
-        
         
         using (StreamReader inputReader = new StreamReader(_input))
         {
@@ -17,7 +18,7 @@ public class Day5Part1 : IPuzzleSolution
             {
                 if (line.Contains("|"))
                 {
-                    var numbers = line.Split("|", StringSplitOptions.RemoveEmptyEntries).Select(Int32.Parse).ToList();
+                    var numbers = line.Split("|", StringSplitOptions.RemoveEmptyEntries).Select(str => str.ToInt()).ToList();
                     if (_rules.ContainsKey(numbers[0]))
                     {
                         _rules[numbers[0]].Add(numbers[1]);
@@ -30,15 +31,21 @@ public class Day5Part1 : IPuzzleSolution
 
                 if (line.Contains(","))
                 {
-                    var numbers = line.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(Int32.Parse).ToList();
-                    if (CheckRules(numbers))
-                    {
-                        sum += numbers[numbers.Count / 2];
-                    }
+                    _numbers.Add(line.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(str => str.ToInt()).ToList());
                 }
             }
         }
 
+        var sum = 0;
+        
+        foreach (var numbers in _numbers)
+        {
+            if (CheckRules(numbers))
+            {
+                sum += numbers[numbers.Count / 2];
+            }
+        }
+        
         return sum.ToString();
     }
 

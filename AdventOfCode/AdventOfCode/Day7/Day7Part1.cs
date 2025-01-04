@@ -1,10 +1,13 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day7;
 
 public class Day7Part1 : IPuzzleSolution
 {
     private string _input = "../../../Day7/input.txt";
 
-    private  new Dictionary<char, Func<long, long, long>> _operations = new()
+    private List<(long expectedSum, List<int> numbers)> _tasks= new ();
+    private Dictionary<char, Func<long, long, long>> _operations = new()
     {
         {'0', (i, i1) => i + i1},
         {'1', (i, i1) => i * i1},
@@ -12,22 +15,27 @@ public class Day7Part1 : IPuzzleSolution
     
     public string Solve()
     {
-        long sumOfCorrecTInputs = 0;
         using (StreamReader inputReader = new StreamReader(_input))
         {
             while (inputReader.ReadLine() is { } line)
             {
                 var expectedSumAndNumbers = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                var expectedSum = Int64.Parse(expectedSumAndNumbers.First());
+                var expectedSum = expectedSumAndNumbers.First().ToLong();
                 var numbers = expectedSumAndNumbers[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => Int32.Parse(x)).ToList();
-
-                if (IsExpectedSumAchievable(expectedSum, numbers))
-                    sumOfCorrecTInputs += expectedSum;
+                    .Select(x => x.ToInt()).ToList();
+                _tasks.Add((expectedSum, numbers));
             }
         }
-
-        return sumOfCorrecTInputs.ToString();
+        
+        long sumOfCorrectInputs = 0;
+        
+        foreach (var task in _tasks)
+        {
+            if(IsExpectedSumAchievable(task.expectedSum, task.numbers))
+                sumOfCorrectInputs += task.expectedSum;
+        }
+        
+        return sumOfCorrectInputs.ToString();
     }
 
     private bool IsExpectedSumAchievable(long expectedSum, List<int> numbers)
