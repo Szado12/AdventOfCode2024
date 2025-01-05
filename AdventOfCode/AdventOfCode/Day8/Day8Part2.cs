@@ -61,18 +61,9 @@ public class Day8Part2 : IPuzzleSolution
         for (int n = 0;; n++)
         {
             var antinode = startingPoint + diff*n;
-            if (IsPointOutOfMap(antinode))
+            if (antinode.IsOutOfRange(_width,_height))
                 break;
             _antinodes.Add(antinode);
         }
-    }
-    
-    private bool IsPointOutOfMap(Point point)
-    {
-        return
-            point.X < 0 ||
-            point.Y < 0 ||
-            point.X >= _width ||
-            point.Y >= _height;
     }
 }

@@ -5,13 +5,14 @@ namespace AdventOfCode.Day8;
 public class Day8Part1 : IPuzzleSolution
 {
     private string _input = "../../../Day8/input.txt";
-    private Dictionary<char, List<Point>> _antenas;
+    private Dictionary<char, List<Point>> _antennas;
     private HashSet<Point> _antinodes = new ();
     private int _height;
     private int _width;
+    
     public string Solve()
     {
-        _antenas = new();
+        _antennas = new();
         _height = 0;
         
         using (StreamReader inputReader = new StreamReader(_input))
@@ -22,10 +23,10 @@ public class Day8Part1 : IPuzzleSolution
                 {
                     if (line[i] != '.')
                     {
-                        if (_antenas.ContainsKey(line[i]))
-                            _antenas[line[i]].Add(new Point(i, _height));
+                        if (_antennas.ContainsKey(line[i]))
+                            _antennas[line[i]].Add(new Point(i, _height));
                         else
-                            _antenas[line[i]] = new List<Point> {new Point(i, _height)};
+                            _antennas[line[i]] = [new(i, _height)];
                     }
                 }
 
@@ -33,9 +34,9 @@ public class Day8Part1 : IPuzzleSolution
                 _height ++;
             }
 
-            foreach (var points in _antenas.Values)
+            foreach (var antena in _antennas.Values)
             {
-                CheckForAntiNode(points);
+                CheckForAntiNode(antena);
             }
         }
 
@@ -52,21 +53,12 @@ public class Day8Part1 : IPuzzleSolution
                 var antinode1 = points[i] + diff;
                 var antinode2 = points[j] - diff;
 
-                if (!IsPointOutOfMap(antinode1))
+                if (antinode1.IsOutOfRange(_width, _height))
                     _antinodes.Add(antinode1);
                 
-                if (!IsPointOutOfMap(antinode2))
+                if (antinode2.IsOutOfRange(_width, _height))
                     _antinodes.Add(antinode2);
             }
         }
-    }
-
-    private bool IsPointOutOfMap(Point point)
-    {
-        return
-            point.X < 0 ||
-            point.Y < 0 ||
-            point.X >= _width ||
-            point.Y >= _height;
     }
 }
