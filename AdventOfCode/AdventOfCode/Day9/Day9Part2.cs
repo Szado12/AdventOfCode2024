@@ -1,3 +1,5 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day9;
 
 public class Day9Part2 : IPuzzleSolution
@@ -18,7 +20,12 @@ public class Day9Part2 : IPuzzleSolution
         ReadDiskMap(diskMap, takenIndexes, freeIndexes);
 
         OptimiseDiskByBlocks(takenIndexes, freeIndexes);
-
+        
+        return CalculateValue(takenIndexes).ToString();
+    }
+    
+    private long CalculateValue(List<(int index, int length, int originalValue)> takenIndexes)
+    {
         long sum = 0;
         foreach (var takenIndex in takenIndexes)
         {
@@ -27,8 +34,8 @@ public class Day9Part2 : IPuzzleSolution
                 sum += (takenIndex.index + i) * takenIndex.originalValue;
             }
         }
-        
-        return sum.ToString();
+
+        return sum;
     }
 
     private static void ReadDiskMap(string diskMap, List<(int index, int length, int originalValue)> takenIndexes, List<(int index, int length)> freeIndexes)
@@ -36,7 +43,7 @@ public class Day9Part2 : IPuzzleSolution
         var diskIndex = 0;
         for (int i = 0; i < diskMap.Length; i++)
         {
-            var length = Int32.Parse(diskMap[i].ToString());
+            var length = diskMap[i].ToInt();
             
             if(length == 0)
                 continue;

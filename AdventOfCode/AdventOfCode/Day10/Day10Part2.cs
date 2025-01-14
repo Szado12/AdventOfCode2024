@@ -9,13 +9,6 @@ public class Day10Part2 : IPuzzleSolution
     private List<Point> _startingPoints = new();
     private int _width;
     private int _height;
-    private List<Point> _directions =
-    [
-        new(0, -1), //up
-        new(1, 0), //right
-        new(0, 1), //down
-        new(-1, 0) //left
-    ];
     
     public string Solve()
     {
@@ -49,7 +42,7 @@ public class Day10Part2 : IPuzzleSolution
     private int SearchPath(Point startingPoint)
     {
         List<Point> finalPoints = new();
-        foreach (var direction in _directions)
+        foreach (var direction in Directions.DirectionsWithoutDiagonals)
         {
             SearchPathRec(startingPoint, direction, 1, finalPoints);
         }
@@ -60,11 +53,11 @@ public class Day10Part2 : IPuzzleSolution
     private void SearchPathRec(Point startingPoint, Point direction, int i, List<Point> finalPoints)
     {
         var nextPoint = startingPoint + direction;
-        if (IsPointOutMap(nextPoint))
+        if (nextPoint.IsOutOfRange(_width,_height))
             return;
 
 
-        if (Int32.Parse(_map[nextPoint.Y][nextPoint.X].ToString()) != i)
+        if (_map[nextPoint.Y][nextPoint.X].ToInt() != i)
             return;
         
         if (i == 9)
@@ -73,19 +66,10 @@ public class Day10Part2 : IPuzzleSolution
             return;
         }
 
-        var nextDirections = _directions.Where(dir => dir != direction * -1); //Skip checking previous point
+        var nextDirections = Directions.DirectionsWithoutDiagonals.Where(dir => dir != direction * -1); //Skip checking previous point
         foreach (var newDirection in nextDirections)
         {
             SearchPathRec(nextPoint, newDirection, i+1, finalPoints);
         }
-    }
-    
-    private bool IsPointOutMap(Point point)
-    {
-        return
-            point.X < 0 ||
-            point.Y < 0 ||
-            point.X >= _width ||
-            point.Y >= _height;
     }
 }

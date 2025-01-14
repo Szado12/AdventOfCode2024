@@ -10,7 +10,7 @@ public class Day7Part2 : IPuzzleSolution
     {
         {'0', (l, l1) => l + l1},
         {'1', (l, l1) => l * l1},
-        {'2', (l, l2) => long.Parse(l.ToString() + l2.ToString())}
+        {'2', (l, l2) => long.Parse(l + l2.ToString())}
     };
     
     public string Solve()
