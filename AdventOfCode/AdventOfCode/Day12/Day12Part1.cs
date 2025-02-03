@@ -7,17 +7,9 @@ public class Day12Part1 : IPuzzleSolution
     private string _input = "../../../Day12/input.txt";
     private int _width;
     private int _height;
-    private List<Point> _directions =
-    [
-        new(0, -1), //up
-        new(1, 0), //right
-        new(0, 1), //down
-        new(-1, 0) //left
-    ];
 
-    private Dictionary<Point, (char value, int group)> _garden = new();
-    private Dictionary<int, int> _perimeter = new();
-    private Dictionary<int, int> _area = new();
+    private Dictionary<Point, char> _garden = new();
+    private HashSet<Point> _alreadyCheckedPoints = new();
     public string Solve()
     {
         _height = 0;
@@ -28,7 +20,7 @@ public class Day12Part1 : IPuzzleSolution
             {
                 for (int i = 0; i < line.Length; i++)
                 {
-                    _garden[new(i, _height)] = (line[i], -1);
+                    _garden[new(i, _height)] = line[i];
                 }
 
                 _width = line.Length;
@@ -37,47 +29,47 @@ public class Day12Part1 : IPuzzleSolution
         }
 
         int sum = 0;
-        int group = 0;
         foreach (var point in _garden.Keys)
         {
-            if (_garden[point].group != -1) //already checked
+            if (_alreadyCheckedPoints.Contains(point)) //already checked
                 continue;
-            SearchRegionByPoint(point, group);
-            sum += _perimeter[group] * _area[group];
-            group++;
+            
+            var result = SearchRegionByPoint(point);
+            sum += result.area * result.perimeter;
         }
         
         return sum.ToString();
     }
 
-    private void SearchRegionByPoint(Point point, int group)
+    private (int area, int perimeter) SearchRegionByPoint(Point point)
     {
         var stack = new Stack<Point>();
         stack.Push(point);
-        var expectedValue = _garden[point].value;
-        _perimeter[group] = 0;
-        _area[group] = 0;
+        var area = 0;
+        var perimeter = 0;
         
         while (stack.Count > 0)
         {
             var currentPoint = stack.Pop();
-            if (_garden[currentPoint].group != -1) //already checked
+            
+            if (_alreadyCheckedPoints.Add(currentPoint) == false)
                 continue;
 
-            _garden[currentPoint] = (_garden[currentPoint].value, group);
-            _area[group]++;
+            area++;
             
-            foreach (var direction in _directions)
+            foreach (var direction in Directions.DirectionsWithoutDiagonals)
             {
                 var nextPoint = currentPoint + direction;
-                if(IsPointOutOfRegion(currentPoint+direction, expectedValue))
-                    _perimeter[group]++;
+                if(IsPointOutOfRegion(currentPoint+direction, _garden[point]))
+                    perimeter++;
                 else
                 {
                     stack.Push(nextPoint);
                 }
             }
         }
+
+        return (area, perimeter);
     }
     
     private bool IsPointOutOfRegion(Point point, char expectedValue)
@@ -87,6 +79,6 @@ public class Day12Part1 : IPuzzleSolution
             point.Y < 0 ||
             point.X >= _width ||
             point.Y >= _height ||
-            _garden[point].value != expectedValue;
+            _garden[point] != expectedValue;
     }
 }
