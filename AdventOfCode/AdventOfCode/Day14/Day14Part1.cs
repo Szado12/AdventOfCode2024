@@ -18,8 +18,8 @@ public class Day14Part1 : IPuzzleSolution
             while (inputReader.ReadLine() is {} line)
             {
                 var matches = Regex.Match(line, _pattern);
-                (Point position, Point movement) robot = (new Point(Int32.Parse(matches.Groups[1].Value), Int32.Parse(matches.Groups[2].Value)),
-                    new Point(Int32.Parse(matches.Groups[3].Value), Int32.Parse(matches.Groups[4].Value)));
+                (Point position, Point movement) robot = (new Point(matches.Groups[1].Value.ToInt(), matches.Groups[2].Value.ToInt()),
+                    new Point(matches.Groups[3].Value.ToInt(), matches.Groups[4].Value.ToInt()));
 
                 _robots.Add(robot);
             }

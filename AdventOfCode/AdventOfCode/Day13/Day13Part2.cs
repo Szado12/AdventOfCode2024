@@ -15,20 +15,20 @@ public class Day13Part2 : IPuzzleSolution
     {
         using (StreamReader inputReader = new StreamReader(_input))
         {
-            LongPoint eq1 = null!, eq2 = null!, result = null!;
+            LongPoint eq1 = null!, eq2 = null!, result;
             while (inputReader.ReadLine() is {} line)
             {
                 if (Regex.IsMatch(line, eq1Regex))
                 {
                     var matches = Regex.Match(line, eq1Regex);
-                    eq1 = new LongPoint(Int32.Parse(matches.Groups[1].Value), Int32.Parse(matches.Groups[2].Value));
+                    eq1 = new LongPoint(matches.Groups[1].Value.ToInt(), matches.Groups[2].Value.ToInt());
                     continue;
                 }
                 
                 if (Regex.IsMatch(line, eq2Regex))
                 {
                     var matches = Regex.Match(line, eq2Regex);
-                    eq2 = new LongPoint(Int32.Parse(matches.Groups[1].Value), Int32.Parse(matches.Groups[2].Value));
+                    eq2 = new LongPoint(matches.Groups[1].Value.ToInt(), matches.Groups[2].Value.ToInt());
                     continue;
                 }
                     

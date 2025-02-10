@@ -21,21 +21,21 @@ public class Day13Part1 : IPuzzleSolution
                 if (Regex.IsMatch(line, eq1Regex))
                 {
                     var matches = Regex.Match(line, eq1Regex);
-                    eq1 = new Point(Int32.Parse(matches.Groups[1].Value), Int32.Parse(matches.Groups[2].Value));
+                    eq1 = new Point(matches.Groups[1].Value.ToInt(), matches.Groups[2].Value.ToInt());
                     continue;
                 }
                 
                 if (Regex.IsMatch(line, eq2Regex))
                 {
                     var matches = Regex.Match(line, eq2Regex);
-                    eq2 = new Point(Int32.Parse(matches.Groups[1].Value), Int32.Parse(matches.Groups[2].Value));
+                    eq2 = new Point(matches.Groups[1].Value.ToInt(), matches.Groups[2].Value.ToInt());
                     continue;
                 }
                     
                 if (Regex.IsMatch(line, resultRegex))
                 {
                     var matches = Regex.Match(line, resultRegex);
-                    result = new Point(Int32.Parse(matches.Groups[1].Value), Int32.Parse(matches.Groups[2].Value));
+                    result = new Point(matches.Groups[1].Value.ToInt(), matches.Groups[2].Value.ToInt());
                     _equations.Add((eq1,eq2,result));
                 }
             }
