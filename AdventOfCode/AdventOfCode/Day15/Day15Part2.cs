@@ -11,6 +11,11 @@ public class Day15Part2 : IPuzzleSolution
     private List<Point> _movements = new();
     private List<(Point, char)> _pointsToChange = new();
     private List<(Point, char)> _pointsToClear= new();
+    private char _wall = '#';
+    private char _boxLeft = '[';
+    private char _boxRight = ']';
+    private char _empty = '.';
+    private char _robot = '@';
     
     public string Solve()
     {
@@ -43,9 +48,9 @@ public class Day15Part2 : IPuzzleSolution
             _pointsToClear = new();
             if (Simulate(_robotPoint, movement))
             {
-                _pointsToClear.Add((_robotPoint, '.'));
+                _pointsToClear.Add((_robotPoint, _empty));
                 _robotPoint += movement;
-                _pointsToChange.Add((_robotPoint, '@'));
+                _pointsToChange.Add((_robotPoint, _robot));
                 ChangePoints(_pointsToClear);
                 ChangePoints(_pointsToChange);
             }
@@ -67,21 +72,21 @@ public class Day15Part2 : IPuzzleSolution
         switch (mapPart)
         {
             case '@':
-                _map.Add(new Point(x*2,y),'@');
-                _map.Add(new Point(x*2+1,y),'.');
+                _map.Add(new Point(x*2,y),_robot);
+                _map.Add(new Point(x*2+1,y),_empty);
                 _robotPoint = new Point(x*2,y);
                 break;
             case '#':
-                _map.Add(new Point(x*2,y),'#');
-                _map.Add(new Point(x*2+1,y),'#');
+                _map.Add(new Point(x*2,y),_wall);
+                _map.Add(new Point(x*2+1,y),_wall);
                 break;
             case 'O':
-                _map.Add(new Point(x*2,y),'[');
-                _map.Add(new Point(x*2+1,y),']');
+                _map.Add(new Point(x*2,y), _boxLeft);
+                _map.Add(new Point(x*2+1,y),_boxRight);
                 break;
             case '.':
-                _map.Add(new Point(x*2,y),'.');
-                _map.Add(new Point(x*2+1,y),'.');
+                _map.Add(new Point(x*2,y),_empty);
+                _map.Add(new Point(x*2+1,y),_empty);
                 break;
                     
         }
@@ -92,72 +97,57 @@ public class Day15Part2 : IPuzzleSolution
         var sum = 0L;
         foreach (var key in _map.Keys)
         {
-            if (_map[key] == '[')
+            if (_map[key] == _boxLeft)
                 sum += key.Y * 100 + key.X;
         }
 
         return sum;
     }
 
-    private void Draw()
-    {
-        for (int i = 0; i < 7; i++)
-        {
-            var str = new StringBuilder();
-            for (int j = 0; j < 12; j++)
-            {
-                str.Append(_map[new(j, i)]);
-            }
-            Console.WriteLine(str);
-        }
-    }
-    
-
     private bool Simulate(Point foodPoint, Point movement)
     {
         var nextPoint = foodPoint + movement;
         
-        if (_map[nextPoint] == '#')
+        if (_map[nextPoint] == _wall)
             return false;
 
-        if (_map[nextPoint] == '.')
+        if (_map[nextPoint] == _empty)
         {
             return true;
         }
 
-        if (movement.Y == 0) //Not vertical movement
+        if (movement.Y == 0) //Horizontal movement
         {
             if (Simulate(nextPoint, movement))
             {
                 _pointsToChange.Add((nextPoint + movement, _map[nextPoint]));
-                _pointsToClear.Add((nextPoint, '.'));
+                _pointsToClear.Add((nextPoint, _empty));
                 return true;
             }
 
             return false;
         }
-        
-        if (_map[nextPoint] == ']') //Vertical movement
+
+        Point boxRightPoint;
+        Point boxLeftPoint;
+
+        if (_map[nextPoint] == _boxRight) //Vertical movement
         {
-            var nextPoint2 = nextPoint - new Point(1, 0);
-            if (Simulate(nextPoint, movement) && Simulate(nextPoint2, movement))
-            {
-                _pointsToChange.Add((nextPoint + movement,_map[nextPoint]));
-                _pointsToChange.Add((nextPoint2 + movement,_map[nextPoint2]));
-                _pointsToClear.Add((nextPoint,'.'));
-                _pointsToClear.Add((nextPoint2,'.'));
-                return true;
-            }
-            return false;
+            boxRightPoint = nextPoint;
+            boxLeftPoint = nextPoint - new Point(1, 0);
         }
-        
-        var nextPoint3 = nextPoint + new Point(1, 0);
-        if (Simulate(nextPoint, movement) && Simulate(nextPoint3, movement))
+        else
         {
-            _pointsToChange.Add((nextPoint + movement,_map[nextPoint]));
-            _pointsToChange.Add((nextPoint3 + movement,_map[nextPoint3]));
-            _pointsToClear.Add((nextPoint,'.'));
-            _pointsToClear.Add((nextPoint3,'.'));
+            boxLeftPoint = nextPoint;
+            boxRightPoint = nextPoint + new Point(1, 0);
+        }
+
+        if (Simulate(boxRightPoint, movement) && Simulate(boxLeftPoint, movement))
+        {
+            _pointsToChange.Add((boxRightPoint + movement , _boxRight));
+            _pointsToChange.Add((boxLeftPoint + movement, _boxLeft));
+            _pointsToClear.Add((boxRightPoint, _empty));
+            _pointsToClear.Add((boxLeftPoint, _empty));
             return true;
         }
         return false;
@@ -170,16 +160,16 @@ public class Day15Part2 : IPuzzleSolution
             switch (movement)
             {
                 case '^':
-                    _movements.Add(new(0, -1));
+                    _movements.Add(Directions.Up);
                     break;
                 case '>':
-                    _movements.Add(new(1, 0));
+                    _movements.Add(Directions.Right);
                     break;
                 case 'v':
-                    _movements.Add(new(0, 1));
+                    _movements.Add(Directions.Down);
                     break;
                 case '<':
-                    _movements.Add(new(-1, 0));
+                    _movements.Add(Directions.Left);
                     break;
                     
             }

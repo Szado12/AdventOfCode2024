@@ -8,6 +8,10 @@ public class Day15Part1 : IPuzzleSolution
     private Dictionary<Point, char> _map = new();
     private Point _robotPoint = null!;
     private List<Point> _movements = new();
+    private char _wall = '#';
+    private char _box = 'O';
+    private char _empty = '.';
+    private char _robot = '@';
     
     public string Solve()
     {
@@ -26,7 +30,7 @@ public class Day15Part1 : IPuzzleSolution
                     {
                         _map[new Point(x, y)] = line[x];
 
-                        if (line[x] == '@')
+                        if (line[x] == _robot)
                             _robotPoint = new(x, y);
                     }
                     y++;
@@ -50,7 +54,7 @@ public class Day15Part1 : IPuzzleSolution
         var sum = 0L;
         foreach (var key in _map.Keys)
         {
-            if (_map[key] == 'O')
+            if (_map[key] == _box)
                 sum += key.Y * 100 + key.X;
         }
 
@@ -61,42 +65,42 @@ public class Day15Part1 : IPuzzleSolution
     {
         var nextPoint = _robotPoint + movement;
         
-        if (_map[nextPoint] == '#')
+        if (_map[nextPoint] == _wall)
             return;
         
-        if (_map[nextPoint] == '.')
+        if (_map[nextPoint] == _empty)
         {
-            _map[_robotPoint] = '.';
-            _map[nextPoint] = '@';
+            _map[_robotPoint] = _empty;
+            _map[nextPoint] = _robot;
             _robotPoint = nextPoint;
             return;
         }
 
-        if (_map[nextPoint] == 'O')
+        if (_map[nextPoint] == _box)
         {
-            if (CheckIfFoodCanBeMoved(nextPoint, movement))
+            if (CheckIfBoxCanBeMoved(nextPoint, movement))
             {
-                _map[_robotPoint] = '.';
-                _map[nextPoint] = '@';
+                _map[_robotPoint] = _empty;
+                _map[nextPoint] = _robot;
                 _robotPoint = nextPoint;
             }
         }
     }
 
-    private bool CheckIfFoodCanBeMoved(Point foodPoint, Point movement)
+    private bool CheckIfBoxCanBeMoved(Point boxPoint, Point movement)
     {
-        var nextPoint = foodPoint + movement;
+        var nextPoint = boxPoint + movement;
         
-        if (_map[nextPoint] == '#')
+        if (_map[nextPoint] == _wall)
             return false;
         
-        if (_map[nextPoint] == '.')
+        if (_map[nextPoint] == _empty)
         {
-            _map[nextPoint] = 'O';
+            _map[nextPoint] = _box;
             return true;
         }
 
-        return CheckIfFoodCanBeMoved(nextPoint, movement);
+        return CheckIfBoxCanBeMoved(nextPoint, movement);
     }
 
     private void MapMovements(string movements)
@@ -106,16 +110,16 @@ public class Day15Part1 : IPuzzleSolution
             switch (movement)
             {
                 case '^':
-                    _movements.Add(new(0, -1));
+                    _movements.Add(Directions.Up);
                     break;
                 case '>':
-                    _movements.Add(new(1, 0));
+                    _movements.Add(Directions.Right);
                     break;
                 case 'v':
-                    _movements.Add(new(0, 1));
+                    _movements.Add(Directions.Down);
                     break;
                 case '<':
-                    _movements.Add(new(-1, 0));
+                    _movements.Add(Directions.Left);
                     break;
                     
             }
