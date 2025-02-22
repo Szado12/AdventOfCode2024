@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using AdventOfCode.Helpers;
 
 namespace AdventOfCode.Day17;
 
@@ -31,12 +32,12 @@ public class Day17Part1 : IPuzzleSolution
             {
                 if (y == 0)
                 {
-                    _regA = Int32.Parse(Regex.Match(line, _regAPattern).Groups[1].Value);
+                    _regA = Regex.Match(line, _regAPattern).Groups[1].Value.ToInt();
                 }
                 
                 else if(y == 4)
                 {
-                    _program = line.Replace("Program: ","").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(str => Int32.Parse(str)).ToList();
+                    _program = line.Replace("Program: ","").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(str => str.ToInt()).ToList();
                 }
 
                 y++;

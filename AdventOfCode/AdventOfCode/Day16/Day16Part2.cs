@@ -9,13 +9,6 @@ public class Day16Part2 : IPuzzleSolution
     private Point _start = null!;
     private Point _end = null!;
     
-    private List<Point> _directions =
-    [
-        new(0, -1), //up
-        new(1, 0), //right
-        new(0, 1), //down
-        new(-1, 0) //left
-    ];
     public string Solve()
     {
         
@@ -41,20 +34,28 @@ public class Day16Part2 : IPuzzleSolution
 
     private long SolveMaze()
     {
+        //priority queue
         PriorityQueue<(Point currentPoint, int directionIndex, HashSet<Point> road) ,long> queue = new();
-        queue.Enqueue((_start,  1, new HashSet<Point>{ _start }),0);
-        var checkedPoints = new Dictionary<(Point currentPoint, int directionIndex), long>();
+        queue.Enqueue((_start,  1, [_start]),0);
+        
+        //Already checked point, with cost required to get there
+        var checkedPoints = new Dictionary<(Point currentPoint, int directionIndex), long>
+        {
+            [(_start, 1)] = 0
+        };
+
         HashSet<Point> bestPlaces = new();
         long bestRoad = Int64.MaxValue;
-        checkedPoints[(_start, 1)] = 0;
             
         while (queue.TryDequeue(out var roadOption, out var priority))
         {
-            (var currentPoint, var directionIndex, var road) = roadOption;
+            var (currentPoint, directionIndex, road) = roadOption;
             
+            //current path cost more than optimal path
             if(priority > bestRoad) 
                 continue;
             
+            //path is optimal, add all positions to hashset
             if (currentPoint == _end)
             {
                 bestRoad = priority;
@@ -66,13 +67,15 @@ public class Day16Part2 : IPuzzleSolution
             
             checkedPoints[(currentPoint, directionIndex)] = priority;
             
+            //adding new possible path options
             for (int i = -1; i < 2; i++)
             {
                 var nextDirectionIndex = directionIndex + i < 0 
                     ? (directionIndex + i +4)  % 4 
                     : (directionIndex + i)  % 4;
-                var nextPoint = currentPoint + _directions[nextDirectionIndex];
+                var nextPoint = currentPoint + Directions.DirectionsWithoutDiagonals[nextDirectionIndex];
                 
+                //If the next tile is wall skip
                 if(_maze[nextPoint] == '#')
                     continue;
                 

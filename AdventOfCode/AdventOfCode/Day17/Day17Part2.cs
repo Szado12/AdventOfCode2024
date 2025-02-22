@@ -1,3 +1,5 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day17;
 
 public class Day17Part2 : IPuzzleSolution
@@ -10,7 +12,7 @@ public class Day17Part2 : IPuzzleSolution
     private static long _regB = 0;
     private static long _regC = 0;
     private List<int> _program = new();
-    private static string _output = "";
+    private static List<int> _output = new();
 
     private Dictionary<int, Action<long>> _operations = new()
     {
@@ -18,7 +20,7 @@ public class Day17Part2 : IPuzzleSolution
         [1] = operand => _regB = _regB ^ operand,
         [2] = operand => _regB = ReadComboOperand(operand) % 8,
         [4] = _ => _regB ^= _regC,
-        [5] = operand => _output += _output.Length == 0 ? ReadComboOperand(operand) % 8 : "," + ReadComboOperand(operand) % 8,
+        [5] = operand => _output.Add((int)(ReadComboOperand(operand) % 8)),
         [6] = operand => _regB = _regA / (int) Math.Pow(2, ReadComboOperand(operand)),
         [7] = operand => _regC = _regA / (int) Math.Pow(2, ReadComboOperand(operand)),
     };
@@ -31,7 +33,7 @@ public class Day17Part2 : IPuzzleSolution
             {
                 if(y == 4)
                 {
-                    _program = line.Replace("Program: ", "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(str => Int32.Parse(str)).ToList();
+                    _program = line.Replace("Program: ", "").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(str => str.ToInt()).ToList();
                 }
 
                 y++;
@@ -45,7 +47,7 @@ public class Day17Part2 : IPuzzleSolution
 
     private static void ResetRegistry(long regAValue)
     {
-        _output = "";
+        _output = new();
         _regA = regAValue;
         _regB = 0;
         _regC = 0;
@@ -76,12 +78,9 @@ public class Day17Part2 : IPuzzleSolution
         return matches.Order().First();
     }
 
-    private bool CheckOutput(string output, List<int> program, int index)
+    private bool CheckOutput(List<int> output, List<int> program, int index)
     {
-        var outputInt = output.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(str => Int32.Parse(str)).ToList();
-        if (outputInt.Count < index)
-            return false;
-        return outputInt[^index] == program[^index];
+        return output.TakeLast(index).SequenceEqual(program.TakeLast(index));
     }
 
 

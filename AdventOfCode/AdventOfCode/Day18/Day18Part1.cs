@@ -12,13 +12,6 @@ public class Day18Part1 : IPuzzleSolution
     private Point _start = new(0, 0);
     private Point _end = new(_width-1, _height-1);
     
-    private List<Point> _directions =
-    [
-        new(0, -1), //up
-        new(1, 0), //right
-        new(0, 1), //down
-        new(-1, 0) //left
-    ];
     public string Solve()
     {
         for (int x = 0; x < _width; x++)
@@ -34,7 +27,7 @@ public class Day18Part1 : IPuzzleSolution
             int lineIndex = 0;
             while (inputReader.ReadLine() is {} line && lineIndex < _byteNumber)
             {
-               var cords= line.Split(",").Select(cord => Int32.Parse(cord)).ToArray();
+               var cords= line.Split(",").Select(str => str.ToInt()).ToArray();
                _map[new(cords[0], cords[1])] = true;
                lineIndex++;
             }
@@ -54,31 +47,20 @@ public class Day18Part1 : IPuzzleSolution
             if (currentPoint == _end)
                 return priority;
 
-            if(checkedPoints.Contains(currentPoint))
+            if(!checkedPoints.Add(currentPoint))
                 continue;
 
-            checkedPoints.Add(currentPoint);
-
-            foreach (var direction in _directions)
+            foreach (var direction in Directions.DirectionsWithoutDiagonals)
             {
                 var nextPoint = currentPoint + direction;
                 
-                if(IsPointOutMap(nextPoint) || _map[nextPoint])
+                if(nextPoint.IsOutOfRange(_width, _height) || _map[nextPoint])
                     continue;
                 
                 queue.Enqueue(nextPoint, priority + 1);
             }
         }
         return -1;
-    }
-    
-    private bool IsPointOutMap(Point point)
-    {
-        return
-            point.X < 0 ||
-            point.Y < 0 ||
-            point.X >= _width ||
-            point.Y >= _height;
     }
 }
 
