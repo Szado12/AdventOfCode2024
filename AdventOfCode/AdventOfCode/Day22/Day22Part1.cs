@@ -1,3 +1,5 @@
+using AdventOfCode.Helpers;
+
 namespace AdventOfCode.Day22;
 
 public class Day22Part1 : IPuzzleSolution
@@ -13,7 +15,7 @@ public class Day22Part1 : IPuzzleSolution
         {
             while (inputReader.ReadLine() is {} line)
             {
-                _secretNumbers.Add(Int64.Parse(line));
+                _secretNumbers.Add(line.ToLong());
             }
         }
 
