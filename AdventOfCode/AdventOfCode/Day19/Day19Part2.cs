@@ -3,7 +3,7 @@ namespace AdventOfCode.Day19;
 public class Day19Part2 : IPuzzleSolution
 {
     private string _input = "../../../Day19/input.txt";
-    private HashSet<string> _towels;
+    private HashSet<string> _towels = [];
     private List<string> _words = new();
     private Dictionary<string, long> _createdWords = new();
     public string Solve()

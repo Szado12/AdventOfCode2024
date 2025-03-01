@@ -20,4 +20,7 @@ public static class PointExtensions{
                point.Y < 0 ||
                point.Y >= maxY;
     }
+
+    public static int DistanceXY(this Point point1, Point point2)
+        => Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y);
 }

@@ -9,15 +9,8 @@ public class Day20Part1 : IPuzzleSolution
     private Dictionary<Point, int> _defaultPath = new();
     private int _width;
     private int _height;
-    private Point _start;
-    private Point _end;
-    private List<Point> _directions =
-    [
-        new(0, -1), //up
-        new(1, 0), //right
-        new(0, 1), //down
-        new(-1, 0) //left
-    ];
+    private Point _start = new(0,0);
+    private Point _end = new(0,0);
     
     public string Solve()
     {
@@ -65,12 +58,12 @@ public class Day20Part1 : IPuzzleSolution
 
         foreach (var (point, step) in _defaultPath)
         {
-            foreach (var direction in _directions)
+            foreach (var direction in Directions.DirectionsWithoutDiagonals)
             {
                 var wallPoint = point + direction;
                 var trackPoint = point + direction*2;
                 
-                if(IsPointOutMap(trackPoint))
+                if(trackPoint.IsOutOfRange(_width, _height))
                     continue;
                 
                 if(!_map[wallPoint] && _map[trackPoint])
@@ -100,7 +93,7 @@ public class Day20Part1 : IPuzzleSolution
 
     private (Point nextPoint, Point direction) NextPoint(Point currentPoint, Point? prevDirection)
     {
-        foreach (var direction in _directions)
+        foreach (var direction in Directions.DirectionsWithoutDiagonals)
         {
             if(prevDirection is not null && direction == prevDirection *-1)
                 continue;
@@ -111,15 +104,6 @@ public class Day20Part1 : IPuzzleSolution
         }
 
         return new(new (-1, -1), new(-1, -1)); //Impossible
-    }
-    
-    private bool IsPointOutMap(Point point)
-    {
-        return
-            point.X < 0 ||
-            point.Y < 0 ||
-            point.X >= _width ||
-            point.Y >= _height;
     }
 }
 

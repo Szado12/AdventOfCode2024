@@ -3,7 +3,7 @@ namespace AdventOfCode.Day19;
 public class Day19Part1 : IPuzzleSolution
 {
     private string _input = "../../../Day19/input.txt";
-    private HashSet<string> _towels;
+    private HashSet<string> _towels = [];
     private List<string> _words = new();
     private Dictionary<string, bool> _createdWords = new();
     public string Solve()
@@ -39,8 +39,8 @@ public class Day19Part1 : IPuzzleSolution
     {
         foreach (var towel in _towels)
         {
-            if (_createdWords.TryGetValue(word, out var created))
-                return created;
+            if (_createdWords.TryGetValue(word, out var canBeCreated))
+                return canBeCreated;
 
             if (word.StartsWith(towel))
             {
@@ -50,10 +50,7 @@ public class Day19Part1 : IPuzzleSolution
                     _createdWords[word] = true;
                     return true;
                 }
-                else
-                {
-                    _createdWords[subWord] = false;
-                }
+                _createdWords[subWord] = false;
             }
         }
 
