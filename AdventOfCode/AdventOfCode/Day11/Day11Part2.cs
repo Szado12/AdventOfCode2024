@@ -47,7 +47,7 @@ public class Day11Part2 : IPuzzleSolution
         if (stone.Length % 2 == 0)
         {
             var left = stone.Substring(0, stone.Length / 2);
-            var right = stone.Substring( stone.Length / 2);
+            var right = stone.Substring( stone.Length / 2).ToLong().ToString();
 
             numOfStones = Blink(left, i - 1) + Blink(right, i - 1);
             _stonesDictionary.Add((stone, i), numOfStones);

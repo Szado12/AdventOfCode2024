@@ -76,7 +76,6 @@ public class Day21Part1 : IPuzzleSolution
             instruction3 += GetPath(instruction2[i - 1], instruction2[i], false);
         }
 
-        Console.WriteLine($"{code} {instruction3}");
         return instruction3.Length;
     }
 

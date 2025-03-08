@@ -29,7 +29,7 @@ public class Day18Part2 : IPuzzleSolution
                 break;
         }
 
-        return _bytes[byteIndex].ToString();
+        return $"{_bytes[byteIndex].X},{_bytes[byteIndex].Y}";
     }
 
     private bool SolveMaze(int bytesIndex)

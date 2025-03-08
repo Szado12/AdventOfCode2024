@@ -97,7 +97,7 @@ private long Next(string stone, int i)
         if (stone.Length % 2 == 0)
         {
             var left = stone.Substring(0, stone.Length / 2);
-            var right = stone.Substring( stone.Length / 2);
+            var right = stone.Substring( stone.Length / 2).ToLong().ToString(); //Remove leading 0s
 
             numOfStones = Next(left, i - 1) + Next(right, i - 1); //Run next iterations for left and right stones
             _stonesDictionary.Add((stone, i), numOfStones);

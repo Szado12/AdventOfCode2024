@@ -48,7 +48,7 @@ public class Day23Part1 : IPuzzleSolution
         if (_computers.ContainsKey(computer1))
             _computers[computer1].Add(computer2);
         else
-            _computers[computer1] = new HashSet<string> {computer2};
+            _computers[computer1] = [computer2];
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿using AdventOfCode;
 
-foreach (var puzzle in PuzzleSolutionLocator.GetAll())
+foreach (var puzzle in PuzzleSolutionLocator.GetPuzzleByDay(11))
 {
     Console.WriteLine($"{puzzle.GetType().Name}: {puzzle.Solve()}");
 }

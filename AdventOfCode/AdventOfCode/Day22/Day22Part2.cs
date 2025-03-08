@@ -8,7 +8,7 @@ public class Day22Part2 : IPuzzleSolution
     private List<long> _secretNumbers = new();
     private Dictionary<(long number, int iteration), long> _cache = new();
     private List<long> _generatedSecretNumbers;
-    private Dictionary<long, Dictionary<(long, long, long, long), long>> _valueChanges = new();
+    private List<Dictionary<(long, long, long, long), long>> _valueChanges = new();
   
     public string Solve()
     {
@@ -24,7 +24,7 @@ public class Day22Part2 : IPuzzleSolution
         {
             _generatedSecretNumbers = new();
             CalculateSecretNumber(secretNumber, 2000);
-            _valueChanges[secretNumber] = GetChangesValue(_generatedSecretNumbers);
+            _valueChanges.Add(GetChangesValue(_generatedSecretNumbers));
         }
 
         long result = GetBestSequence();
@@ -33,7 +33,7 @@ public class Day22Part2 : IPuzzleSolution
 
     private long GetBestSequence()
     {
-        var mergedDict = _valueChanges.Values.SelectMany(d => d)
+        var mergedDict = _valueChanges.SelectMany(d => d)
             .GroupBy(d => d.Key, (key, values) => new {Key = key, Value = values.Sum(x => x.Value)})
             .ToDictionary(x => x.Key, x => x.Value);
         var maxValue = mergedDict.Values.Max();

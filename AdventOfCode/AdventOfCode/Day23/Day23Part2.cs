@@ -28,12 +28,12 @@ public class Day23Part2 : IPuzzleSolution
         if (candidates.Count == 0 && exclusionSet.Count == 0)
         {
             if (currentClique.Count > biggestClique.Count)
-                biggestClique = new List<string>(currentClique);
+                biggestClique = [..currentClique];
         }
 
         foreach (var candidate in new List<string>(candidates))
         {
-            BronKerbosch(new List<string>(currentClique) {candidate}, candidates.Intersect(_computers[candidate]).ToList(), exclusionSet.Intersect(_computers[candidate]).ToList());
+            BronKerbosch([..currentClique, candidate], candidates.Intersect(_computers[candidate]).ToList(), exclusionSet.Intersect(_computers[candidate]).ToList());
             candidates.Remove(candidate);
             exclusionSet.Add(candidate);
         }
@@ -44,6 +44,6 @@ public class Day23Part2 : IPuzzleSolution
         if (_computers.ContainsKey(computer1))
             _computers[computer1].Add(computer2);
         else
-            _computers[computer1] = new HashSet<string> {computer2};
+            _computers[computer1] = [computer2];
     }
 }

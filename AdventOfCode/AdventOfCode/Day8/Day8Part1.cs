@@ -53,10 +53,10 @@ public class Day8Part1 : IPuzzleSolution
                 var antinode1 = points[i] + diff;
                 var antinode2 = points[j] - diff;
 
-                if (antinode1.IsOutOfRange(_width, _height))
+                if (antinode1.IsOutOfRange(_width, _height) == false)
                     _antinodes.Add(antinode1);
                 
-                if (antinode2.IsOutOfRange(_width, _height))
+                if (antinode2.IsOutOfRange(_width, _height) == false)
                     _antinodes.Add(antinode2);
             }
         }
